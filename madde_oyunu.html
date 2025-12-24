@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Madde Dedektifleri | tolgaaydos.com</title>
+    <style>
+        /* --- GÖRSEL TASARIM (NEON & GAME MODE) --- */
+        :root {
+            --bg-color: #121225; /* Daha koyu lacivert arka plan */
+            --card-bg: #1a1a2e;
+            --text-color: #ffffff;
+            --success: #00ff88;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .game-container {
+            width: 95%;
+            max-width: 950px; /* Genişliği artırdık */
+            text-align: center;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.6); /* Daha güçlü gölge */
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 25px;
+            margin-top: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(108, 92, 231, 0.8);
+            display: inline-block;
+        }
+
+        .title-icon { font-size: 1.8rem; margin: 0 10px; filter: drop-shadow(0 0 5px rgba(255,255,255,0.5)); }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            background: rgba(0,0,0,0.4);
+            padding: 15px 25px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .score-box { color: var(--success); text-shadow: 0 0 10px rgba(0, 255, 136, 0.4); }
+        .timer-box { color: #f1c40f; text-shadow: 0 0 10px rgba(241, 196, 15, 0.4); }
+        .question-box { color: #fff; }
+
+        .question-card {
+            background: linear-gradient(180deg, #232f52 0%, #1b2440 100%);
+            padding: 50px 20px;
+            border-radius: 15px;
+            margin-bottom: 35px;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: 800;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.08);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            transition: all 0.3s;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 25px; /* Buton arası boşluk */
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 25px 0;
+            font-size: 1.5rem;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            color: white;
+            font-weight: 900;
+            width: 48%;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 2px rgba(0,0,0,0.3);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Yaylanma efekti */
+        }
+
+        /* --- BUTONLARIN ÖZEL TASARIMI --- */
+        
+        /* Fiziksel: Canlı Cyan/Mavi */
+        .btn-fiziksel {
+            background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
+            box-shadow: 0 0 25px rgba(0, 198, 255, 0.5), inset 0 2px 0 rgba(255,255,255,0.2);
+            border-bottom: 4px solid #005bb5; /* 3D etkisi için alt kenar */
+        }
+
+        /* Kimyasal: Canlı Kırmızı/Pembe */
+        .btn-kimyasal {
+            background: linear-gradient(135deg, #ff6b81 0%, #ff4757 100%);
+            box-shadow: 0 0 25px rgba(255, 71, 87, 0.5), inset 0 2px 0 rgba(255,255,255,0.2);
+            border-bottom: 4px solid #c41e3a; /* 3D etkisi için alt kenar */
+        }
+
+        /* Hover (Üzerine Gelince) - Büyüme */
+        .btn:hover:not(:disabled) {
+            transform: scale(1.05) translateY(-3px); /* Yukarı kalkıp büyüyor */
+            filter: brightness(1.15); /* Daha parlak oluyor */
+            z-index: 10;
+        }
+
+        /* Active (Tıklayınca) - Basılma */
+        .btn:active:not(:disabled) {
+            transform: scale(0.96) translateY(2px); /* İçeri göçüyor */
+            border-bottom-width: 1px; /* Alt kenar inceliyor (basılma hissi) */
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        /* Disable Durumu */
+        .btn:disabled {
+            filter: grayscale(0.8);
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* --- KUTUCUK (CHECKBOX) --- */
+        /* İstediğin gibi içi daha koyu ve derinlikli */
+        .checkbox-icon {
+            width: 26px;
+            height: 26px;
+            border-radius: 6px;
+            display: inline-block;
+            background-color: rgba(0, 0, 0, 0.4); /* Koyu yarı saydam siyah */
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            box-shadow: inset 0 3px 5px rgba(0,0,0,0.5); /* İç gölge (derinlik) */
+        }
+
+        .feedback {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            height: 30px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.3);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 20px;
+        }
+        
+        .footer a { color: #00d2ff; text-decoration: none; }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-10px); }
+            40% { transform: translateX(10px); }
+            60% { transform: translateX(-10px); }
+            80% { transform: translateX(10px); }
+        }
+        .shake { animation: shake 0.5s; border: 2px solid #ff4757 !important; color: #ff4757; }
+        
+        .correct-anim { 
+            border: 2px solid var(--success) !important; 
+            box-shadow: 0 0 30px var(--success) !important;
+            transform: scale(1.02);
+            color: var(--success);
+        }
+
+        .end-screen { display: none; }
+        .restart-btn { 
+            width: 70%; 
+            background: linear-gradient(90deg, #00b09b, #96c93d); 
+            box-shadow: 0 0 20px rgba(150, 201, 61, 0.6); 
+            margin-top: 30px;
+            border-bottom: 4px solid #2e7d32;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <div id="game-area">
+            <h1><span class="title-icon">🧪</span> MADDE DEDEKTİFLERİ <span class="title-icon">🍬</span></h1>
+            
+            <div class="stats-bar">
+                <div class="score-box">Puan: <span id="score">0</span></div>
+                <div class="timer-box">Süre: <span id="timer">15</span></div>
+                <div class="question-box">Soru: <span id="q-count">1</span>/<span id="total-q">20</span></div>
+            </div>
+
+            <div class="question-card" id="question-text">
+                Yükleniyor...
+            </div>
+
+            <div class="btn-container">
+                <button id="btn-fiz" class="btn btn-fiziksel">
+                    <span class="checkbox-icon"></span> FİZİKSEL
+                </button>
+                <button id="btn-kim" class="btn btn-kimyasal">
+                    <span class="checkbox-icon"></span> KİMYASAL
+                </button>
+            </div>
+
+            <div class="feedback" id="feedback-text"></div>
+        </div>
+
+        <div id="end-screen" class="end-screen">
+            <h1>OYUN BİTTİ!</h1>
+            <h2 id="final-message"></h2>
+            <p style="font-size: 1.8rem;">Toplam Puan: <span id="final-score" style="color:var(--success)">0</span></p>
+            <button class="btn restart-btn" id="restart-btn">🔄 TEKRAR OYNA</button>
+        </div>
+
+        <div class="footer">
+            Bu etkinlik <a href="https://tolgaaydos.com" target="_blank">tolgaaydos.com</a> tarafından hazırlanmıştır.
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        try {
+            // --- SORU HAVUZU ---
+            var questionsSource = [
+                { text: "Tebeşirin toz haline getirilmesi", type: "fiziksel", desc: "Maddenin sadece boyutu değişti." },
+                { text: "Küp şekerin ezilerek toz olması", type: "fiziksel", desc: "Şekerin yapısı değişmedi." },
+                { text: "Suyun donması", type: "fiziksel", desc: "Hal değişimleri fizikseldir." },
+                { text: "Alkolün buharlaşması", type: "fiziksel", desc: "Sıvıdan gaza geçiş fizikseldir." },
+                { text: "İyodun süblimleşmesi", type: "fiziksel", desc: "Katıdan gaza doğrudan geçiş." },
+                { text: "Su buharının yoğuşması", type: "fiziksel", desc: "Gazdan sıvıya dönüş fizikseldir." },
+                { text: "Suyun kaynaması", type: "fiziksel", desc: "Hal değişimidir." },
+                { text: "Camın buğulanması", type: "fiziksel", desc: "Su buharının cama çarpıp sıvılaşması." },
+                { text: "Gökkuşağı oluşumu", type: "fiziksel", desc: "Işığın kırılması fizikseldir." },
+                { text: "Altından bilezik yapılması", type: "fiziksel", desc: "Metalin şekil değiştirmesidir." },
+                { text: "Odunun kırılması", type: "fiziksel", desc: "Odun hala odun, sadece parçalandı." },
+                { text: "Camın kırılması", type: "fiziksel", desc: "Parçalanma olayı fizikseldir." },
+                { text: "Yoğurttan ayran yapılması", type: "fiziksel", desc: "Sadece su ile karıştı, yapı bozulmadı." },
+                { text: "Bakırdan tencere yapılması", type: "fiziksel", desc: "Bakıra şekil verildi." },
+                { text: "Havucun rendelenmesi", type: "fiziksel", desc: "Besin değeri aynı, boyutu küçüldü." },
+                { text: "Dondurmanın erimesi", type: "fiziksel", desc: "Eriyen madde tekrar dondurulabilir." },
+                { text: "Etten kıyma yapılması", type: "fiziksel", desc: "Et sadece parçalandı." },
+                { text: "Kırağı oluşması", type: "fiziksel", desc: "Havadaki nemin donmasıdır." },
+                { text: "Taşın toprağa dönüşmesi", type: "fiziksel", desc: "Rüzgar ve su ile aşınmadır." },
+                { text: "Havanın sıkıştırılması", type: "fiziksel", desc: "Gaz molekülleri birbirine yaklaştı." },
+                { text: "Elmanın soyulması", type: "fiziksel", desc: "Dış görünüş değişti." },
+                { text: "Sulu boyanın kuruması", type: "fiziksel", desc: "Su buharlaştı, boya kaldı." },
+                { text: "Demirin genleşmesi", type: "fiziksel", desc: "Isı ile boyca uzama fizikseldir." },
+                { text: "Ekmeğin ufalanması", type: "fiziksel", desc: "Ekmeğin kimliği değişmedi." },
+                { text: "Ekmeğin dilimlenmesi", type: "fiziksel", desc: "Şekil değişikliğidir." },
+                { text: "Kablonun kopması", type: "fiziksel", desc: "Sadece bütünlük bozuldu." },
+                { text: "Yayın gerilmesi", type: "fiziksel", desc: "Esneklik fiziksel bir özelliktir." },
+                { text: "Yağmurun yağması", type: "fiziksel", desc: "Su döngüsü olayları fizikseldir." },
+                { text: "Hamura şekil verilmesi", type: "fiziksel", desc: "Henüz pişmedi, sadece şekil aldı." },
+                { text: "Cevizin ezilmesi", type: "fiziksel", desc: "Parçalanma olayıdır." },
+                { text: "Balın şekerlenmesi", type: "fiziksel", desc: "Isıtılınca geçer, kimyasal değildir." },
+                { text: "Yumurtanın bozulması", type: "kimyasal", desc: "Kokusu ve yapısı değişir." },
+                { text: "Hamurun mayalanması", type: "kimyasal", desc: "Maya mantarları yapıyı değiştirir." },
+                { text: "Ekmek pişirilmesi", type: "kimyasal", desc: "Pişme geri döndürülemez." },
+                { text: "Demirin paslanması", type: "kimyasal", desc: "Oksitlenme (yanma) olayıdır." },
+                { text: "Gümüşün kararması", type: "kimyasal", desc: "Hava ile tepkimeye girer." },
+                { text: "Fotosentez olayı", type: "kimyasal", desc: "Besin ve oksijen üretimidir." },
+                { text: "Dişlerin çürümesi", type: "kimyasal", desc: "Bakteriler dişi aşındırır." },
+                { text: "Saç telinin yanması", type: "kimyasal", desc: "Yanma sonucu kül oluşur." },
+                { text: "Kibritin yanması", type: "kimyasal", desc: "Yanma olayları kimyasaldır." },
+                { text: "Şekerin yakılması", type: "kimyasal", desc: "Isı şekerin yapısını bozar." },
+                { text: "Köftenin pişmesi", type: "kimyasal", desc: "Etin protein yapısı değişir." },
+                { text: "Üzümden sirke yapılması", type: "kimyasal", desc: "Fermantasyon kimyasaldır." },
+                { text: "Besinlerin sindirilmesi", type: "kimyasal", desc: "Enzimler besinleri parçalar." },
+                { text: "Soğanın kızartılması", type: "kimyasal", desc: "Renk ve tat değişimi olur." },
+                { text: "Yemeğin bozulması", type: "kimyasal", desc: "Bakteriler besini çürütür." },
+                { text: "Yaprakların sararması", type: "kimyasal", desc: "Klorofil yapısı bozulur." },
+                { text: "Turşu yapımı", type: "kimyasal", desc: "Sebzeler fermente olur." },
+                { text: "Patatese iyot damlatılması", type: "kimyasal", desc: "Renk değişimi (Morarma) kimyasaldır." },
+                { text: "Sütten peynir yapılması", type: "kimyasal", desc: "Sütün yapısı tamamen değişir." },
+                { text: "Yumurtanın haşlanması", type: "kimyasal", desc: "Isı ile katılaşma kimyasaldır." },
+                { text: "Elmanın kararması", type: "kimyasal", desc: "Oksijenle tepkimeye girer." },
+                { text: "Kabartma tozuna limon sıkılması", type: "kimyasal", desc: "Gaz çıkışı tepkimeyi gösterir." },
+                { text: "Yoğurdun ekşimesi", type: "kimyasal", desc: "Bakteriyel bir bozulmadır." },
+                { text: "Betonun donması", type: "kimyasal", desc: "Çimento suyla bağ kurar." },
+                { text: "Kekin pişirilmesi", type: "kimyasal", desc: "Hamur keke dönüşür." },
+                { text: "Ateş böceğinin ışık saçması", type: "kimyasal", desc: "Vücudunda kimyasal olay olur." },
+                { text: "Arının bal yapması", type: "kimyasal", desc: "Nektar kimyasal değişime uğrar." },
+                { text: "Metalin asitle tepkimesi", type: "kimyasal", desc: "Gaz çıkışı ve aşınma olur." },
+                { text: "Kumdan cam yapılması", type: "kimyasal", desc: "Yapı tamamen değişir." },
+                { text: "Yağdan sabun yapılması", type: "kimyasal", desc: "Yağ asitleri tuza dönüşür." }
+            ];
+
+            // --- DEĞİŞKENLER ---
+            var currentQuestion = {};
+            var score = 0;
+            var questionIndex = 0;
+            var timer;
+            var timeLeft = 15;
+            var gameQuestions = [];
+            var questionsPerGame = 20;
+
+            // --- FONKSİYONLAR ---
+            function startGame() {
+                score = 0;
+                questionIndex = 0;
+                // Karıştırma
+                gameQuestions = questionsSource.sort(function() { return 0.5 - Math.random() }).slice(0, questionsPerGame);
+                
+                document.getElementById('score').innerText = score;
+                document.getElementById('total-q').innerText = questionsPerGame;
+                document.getElementById('end-screen').style.display = 'none';
+                document.getElementById('game-area').style.display = 'block';
+                
+                loadNextQuestion();
+            }
+
+            function loadNextQuestion() {
+                if (questionIndex >= questionsPerGame) {
+                    finishGame();
+                    return;
+                }
+
+                currentQuestion = gameQuestions[questionIndex];
+                document.getElementById('q-count').innerText = questionIndex + 1;
+                document.getElementById('question-text').innerText = currentQuestion.text;
+                document.getElementById('question-text').className = "question-card"; 
+                document.getElementById('feedback-text').style.opacity = '0';
+                
+                if(timer) clearInterval(timer);
+                timeLeft = 15;
+                document.getElementById('timer').innerText = timeLeft;
+                startTimer();
+                
+                // Butonları aktif et
+                var btnFiz = document.getElementById('btn-fiz');
+                var btnKim = document.getElementById('btn-kim');
+                btnFiz.disabled = false;
+                btnKim.disabled = false;
+                
+                // Butonların style'ını sıfırla (eğer değiştiyse)
+                btnFiz.style.opacity = "1";
+                btnKim.style.opacity = "1";
+            }
+
+            function startTimer() {
+                timer = setInterval(function() {
+                    timeLeft--;
+                    document.getElementById('timer').innerText = timeLeft;
+                    if (timeLeft <= 0) {
+                        clearInterval(timer);
+                        giveFeedback(false, "Süre Doldu!");
+                    }
+                }, 1000);
+            }
+
+            function giveFeedback(isCorrect, customMsg) {
+                if(timer) clearInterval(timer);
+                
+                var card = document.getElementById('question-text');
+                var feedback = document.getElementById('feedback-text');
+                
+                document.getElementById('btn-fiz').disabled = true;
+                document.getElementById('btn-kim').disabled = true;
+
+                if (isCorrect) {
+                    score += 5;
+                    card.classList.add('correct-anim');
+                    feedback.innerHTML = '<span style="color:var(--success)">✅ HARİKA! ' + currentQuestion.desc + '</span>';
+                } else {
+                    card.classList.add('shake');
+                    var dogrusu = currentQuestion.type === 'fiziksel' ? 'FİZİKSEL' : 'KİMYASAL';
+                    var msg = customMsg || currentQuestion.desc;
+                    feedback.innerHTML = '<span style="color:#ff4757">❌ YANLIŞ! Doğrusu: ' + dogrusu + '. <br><span style="font-size:0.9em; color:#ddd">' + msg + '</span></span>';
+                }
+
+                document.getElementById('score').innerText = score;
+                feedback.style.opacity = '1';
+
+                setTimeout(function() {
+                    questionIndex++;
+                    loadNextQuestion();
+                }, 3000);
+            }
+
+            function finishGame() {
+                document.getElementById('game-area').style.display = 'none';
+                document.getElementById('end-screen').style.display = 'block';
+                document.getElementById('final-score').innerText = score;
+
+                var message = "";
+                if(score >= 90) message = "🏆 MÜKEMMEL SONUÇ!";
+                else if(score >= 70) message = "🧪 ÇOK BAŞARILI!";
+                else message = "📚 BİRAZ DAHA TEKRAR GEREKLİ";
+                
+                document.getElementById('final-message').innerText = message;
+            }
+
+            // --- OLAY DİNLEYİCİLERİ ---
+            document.getElementById('btn-fiz').onclick = function() {
+                var isCorrect = ('fiziksel' === currentQuestion.type);
+                giveFeedback(isCorrect);
+            };
+
+            document.getElementById('btn-kim').onclick = function() {
+                var isCorrect = ('kimyasal' === currentQuestion.type);
+                giveFeedback(isCorrect);
+            };
+
+            document.getElementById('restart-btn').onclick = function() {
+                startGame();
+            };
+
+            // Oyunu Başlat
+            startGame();
+
+        } catch (error) {
+            console.error("Oyun Hatası:", error);
+            document.getElementById('question-text').innerText = "Hata oluştu! Lütfen sayfayı yenileyin.";
+        }
+    })();
+    </script>
+</body>
+</html>
