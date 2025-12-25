@@ -23,8 +23,8 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            overflow: hidden; /* Kaydırmayı engelle */
-            touch-action: manipulation; /* Mobilde dokunma tepkisini iyileştirir */
+            overflow: hidden;
+            touch-action: manipulation;
         }
 
         .game-container {
@@ -78,7 +78,7 @@
             padding: 40px 20px;
             border-radius: 15px;
             margin-bottom: 30px;
-            min-height: 120px; /* Sabit yükseklik hissi */
+            min-height: 120px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -115,7 +115,7 @@
             letter-spacing: 1px;
             text-shadow: 0 2px 2px rgba(0,0,0,0.3);
             transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            -webkit-tap-highlight-color: transparent; /* Mobilde tıklama grisini kaldır */
+            -webkit-tap-highlight-color: transparent;
         }
 
         /* --- BUTONLAR --- */
@@ -148,7 +148,7 @@
         .checkbox-icon {
             width: 30px;
             height: 30px;
-            min-width: 30px; /* Mobilde büzülmeyi engelle */
+            min-width: 30px;
             border-radius: 6px;
             display: flex;
             align-items: center;
@@ -181,7 +181,7 @@
         .feedback {
             margin-top: 20px;
             font-size: 1.2rem;
-            min-height: 60px; /* Mobilde yazı kaymasını önlemek için sabit alan */
+            min-height: 60px;
             opacity: 0;
             transition: opacity 0.3s;
             font-weight: bold;
@@ -228,40 +228,45 @@
             border-bottom: 4px solid #2e7d32;
         }
 
-        /* --- MOBİL UYUMLULUK AYARLARI (RESPONSIVE) --- */
+        /* --- MOBİL UYUMLULUK AYARLARI (GÜNCELLENDİ) --- */
         @media screen and (max-width: 768px) {
             .game-container {
                 padding: 20px;
                 width: 92%;
             }
 
+            /* --- BURASI DÜZELTİLDİ: BAŞLIK TEK SATIR --- */
             h1 {
-                font-size: 1.5rem; /* Başlığı küçült */
+                font-size: 1.2rem; /* Başlık boyutu küçültüldü */
                 margin-bottom: 15px;
+                white-space: nowrap; /* Asla alt satıra geçmesin */
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
-            .title-icon { font-size: 1.2rem; margin: 0 5px; }
+            .title-icon { font-size: 1.4rem; margin: 0 5px; } /* İkonlar da başlıkla orantılandı */
 
             .stats-bar {
-                font-size: 0.9rem; /* İstatistik yazılarını küçült */
+                font-size: 0.9rem;
                 padding: 10px;
                 margin-bottom: 15px;
             }
 
             .question-card {
-                font-size: 1.3rem; /* Soru metnini küçült */
+                font-size: 1.3rem;
                 padding: 20px;
                 min-height: 100px;
                 margin-bottom: 20px;
             }
 
             .btn-container {
-                gap: 10px; /* Buton aralarını sıkılaştır */
+                gap: 10px;
             }
 
             .btn {
-                padding: 15px 5px; /* Buton dolgusunu azalt */
-                font-size: 1rem; /* Buton yazısını küçült */
+                padding: 15px 5px;
+                font-size: 1rem;
                 border-radius: 10px;
             }
 
